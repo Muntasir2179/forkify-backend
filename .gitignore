@@ -1,0 +1,9 @@
+# environment
+env
+
+# database
+db.sqlite3
+
+# folders
+migrations
+__pycache__
