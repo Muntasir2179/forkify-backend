@@ -11,7 +11,7 @@ class Unit(models.Model):
 
 class Ingredient(models.Model):
     quantity = models.FloatField(null=True, blank=True)
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True, blank=True)
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True, blank=True, related_name='unit')
     description = models.TextField(max_length=100)
     
     def __str__(self):
@@ -30,7 +30,7 @@ class Recipes(models.Model):
     servings = models.IntegerField()
     source_url = models.URLField()
     title = models.CharField(max_length=100)
-    ingredients = models.ManyToManyField(Ingredient)
+    ingredients = models.ManyToManyField(Ingredient, related_name='ingredients')
     
     class Meta:
         verbose_name_plural = 'Recipes'

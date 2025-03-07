@@ -1,5 +1,7 @@
-from django.urls import path, include
+from django.urls import path
+from recipe import views
 
 urlpatterns = [
-    
+    path('recipes/', view=views.AllRecipe.as_view(), name='all-recipe'),
+    path('recipes/<str:id>/', view=views.SingleRecipe.as_view(), name='single-recipe'),
 ]
