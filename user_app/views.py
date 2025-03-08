@@ -1,4 +1,3 @@
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -9,25 +8,21 @@ import uuid
 
 # Create your views here.
 
-@api_view(["GET",])
-def register_user(request):
-    return Response(data={'data': 'Request Successful'})
-
-
 class GenerateTokenForGuestView(APIView):
     permission_classes = [AllowAny]  # Allows anyone to generate a token
 
     def post(self, request):
-        # Generate a unique guest ID (UUID)
-        guest_id = str(uuid.uuid4())  # Random unique identifier for guest users
+        guest_id = str(uuid.uuid4())  # Generate a unique guest ID
         
-        # Create a custom token payload
         token = AccessToken()
-        token["guest_id"] = guest_id  # Include guest ID in the token payload
-        token.set_exp(from_time=datetime.now(), lifetime=timedelta(hours=1))  # Fixed expiration time
+        token["guest_id"] = guest_id  # Attach guest ID to the token
+
+        # Set token expiration (1 hour from now)
+        expiry_time = datetime.utcnow() + timedelta(hours=1)
+        token.set_exp(from_time=datetime.utcnow(), lifetime=timedelta(hours=1))
 
         return Response({
             "access_token": str(token),
-            "expires_in": '1 hour',  # 1 hour in seconds
-            "guest_id": guest_id  # Return guest ID for reference
+            "expires_at": expiry_time,
+            "guest_id": guest_id
         })

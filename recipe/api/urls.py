@@ -1,7 +1,8 @@
 from django.urls import path
-from recipe import views
+from recipe.api import views
 
 urlpatterns = [
     path('recipes/', view=views.AllRecipe.as_view(), name='all-recipe'),
     path('recipes/<str:id>/', view=views.SingleRecipe.as_view(), name='single-recipe'),
+    path('access-data/', view=views.AllRecipeIncludeUser.as_view(), name='access-data'),
 ]
