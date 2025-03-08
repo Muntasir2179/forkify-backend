@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('forkify/', include('recipe.urls')),
+    path('forkify-user/', include('user_app.urls')),
 ]
