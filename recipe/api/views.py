@@ -12,7 +12,7 @@ from recipe.api.authentication import GuestJWTAuthentication
 class AllRecipe(APIView):
     '''
     Usage:
-        1. Handles all recipe request
+        1. Handles all recipe request but excludes user added recipes
         2. Handles specific search recipe request
     '''
     def get(self, request):
@@ -30,8 +30,11 @@ class AllRecipe(APIView):
         serializer = RecipeSerializer(recipes, many=True)
         data = []
         for item in serializer.data:
-            item['ingredients'] = format_ingredients(item['ingredients'])
-            data.append(item)
+            if item['key'] == None:  # only keep those recipes which are not created by any user (user created recipe will contain key)
+                item.pop('key')
+                item.pop('created_at')
+                item['ingredients'] = format_ingredients(item['ingredients'])
+                data.append(item)
         
         return Response(data=data, status=status.HTTP_200_OK)
 
@@ -57,8 +60,15 @@ class AllRecipeIncludeUser(APIView):
     permission_classes = [HasValidToken]  # Apply the custom permission
 
     def get(self, request):
-        key = request.auth  # we can access the token from request.auth
-        return Response({
-            "message": "You have access to this protected resource!",
-            "guest_id": request.user["guest_id"]
-        })
+        token = request.auth  # we can access the token from request.auth
+        
+        try:
+            recipes = Recipes.objects.filter(key=None)
+            user_recipes = Recipes.objects.filter(key=token)  # fetching recipes create by user
+        except Recipes.DoesNotExist:
+            return Response({'response': 'No recipes found!'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = RecipeSerializer(recipes, many=True)
+        user_recipes_serializer = RecipeSerializer(user_recipes, many=True)
+
+        return Response(data=serializer.data + user_recipes_serializer.data, status=status.HTTP_200_OK)

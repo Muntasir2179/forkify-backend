@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework import status
 from datetime import datetime, timezone
 
 class GuestJWTAuthentication(JWTAuthentication):
@@ -28,14 +29,14 @@ class GuestJWTAuthentication(JWTAuthentication):
 
             # Ensure the token has a guest_id
             if "guest_id" not in validated_token:
-                raise AuthenticationFailed("Token is missing guest_id", code="token_not_valid")
+                raise AuthenticationFailed("Token is missing guest_id", code=status.HTTP_401_UNAUTHORIZED)
 
             # Check if the token has expired
             if validated_token["exp"] < datetime.now(timezone.utc).timestamp():
-                raise AuthenticationFailed("Token has expired", code="token_not_valid")
+                raise AuthenticationFailed("Token has expired", code=status.HTTP_401_UNAUTHORIZED)
 
             # Return a dummy user object (since we are not using Django users)
             return ({"guest_id": validated_token["guest_id"]}, validated_token)
 
         except Exception as e:
-            raise AuthenticationFailed("Invalid or expired token", code="token_not_valid")
+            raise AuthenticationFailed("Invalid or expired token", code=status.HTTP_401_UNAUTHORIZED)

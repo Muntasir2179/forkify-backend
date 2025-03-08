@@ -1,6 +1,8 @@
 from rest_framework.permissions import BasePermission
 from rest_framework.exceptions import AuthenticationFailed
-from .authentication import GuestJWTAuthentication
+from rest_framework import status
+
+from recipe.api.authentication import GuestJWTAuthentication
 
 class HasValidToken(BasePermission):
     """
@@ -15,7 +17,7 @@ class HasValidToken(BasePermission):
 
             if user is not None and token is not None:
                 return True  # Valid token, grant access
-        except AuthenticationFailed:
-            pass  # Token is invalid, deny access
+        except Exception as e:
+            raise AuthenticationFailed('Access credential is invalid or not provided!', code=status.HTTP_401_UNAUTHORIZED)
 
         return False  # No valid token found

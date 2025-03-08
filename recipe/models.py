@@ -24,12 +24,14 @@ def generate_unique_id():
 
 class Recipes(models.Model):
     id = models.CharField(max_length=24, primary_key=True, unique=True, default=generate_unique_id, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     cooking_time = models.IntegerField()
     image_url = models.URLField()
     publisher = models.CharField(max_length=50)
     servings = models.IntegerField()
     source_url = models.URLField()
     title = models.CharField(max_length=100)
+    key = models.TextField(max_length=500, blank=True, null=True)
     ingredients = models.ManyToManyField(Ingredient, related_name='ingredients')
     
     class Meta:
