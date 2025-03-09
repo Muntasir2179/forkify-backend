@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from recipe.models import Recipes
 from recipe.api.serializers import RecipeSerializer
-from recipe.api.helpers import format_ingredients
+from recipe.api.helpers import format_recipe
 from recipe.api.permissions import HasValidToken
 from recipe.api.authentication import GuestJWTAuthentication
 # Create your views here.
@@ -12,31 +12,46 @@ from recipe.api.authentication import GuestJWTAuthentication
 class AllRecipe(APIView):
     '''
     Usage:
-        1. Handles all recipe request but excludes user added recipes
-        2. Handles specific search recipe request
+        1. Handles search recipes request
+        2. Handles user recipes request using key
     '''
     def get(self, request):
-        try:
-            query = request.query_params.get('search')
-            if query == None:
-                err_message = 'No recipes found'  # setting up error message for all recipe case if it needs
-                recipes = Recipes.objects.all()
-            else:
-                err_message = 'No such recipes found! Try something else!'  # setting up recipe for search case if it needs
+        combined_recipes = []
+        query = request.query_params.get('search')
+        token = request.query_params.get('key')
+        
+        if query or token:
+            # if search query is passed
+            if query:
                 recipes = Recipes.objects.filter(title__contains=query)
-        except Recipes.DoesNotExist:
-            return Response({'error': err_message}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = RecipeSerializer(recipes, many=True)
-        data = []
-        for item in serializer.data:
-            if item['key'] == None:  # only keep those recipes which are not created by any user (user created recipe will contain key)
-                item.pop('key')
-                item.pop('created_at')
-                item['ingredients'] = format_ingredients(item['ingredients'])
-                data.append(item)
-        
-        return Response(data=data, status=status.HTTP_200_OK)
+                serializer = RecipeSerializer(recipes, many=True)
+                combined_recipes += serializer.data
+            
+            # if key is passed
+            if token:
+                user_recipes = Recipes.objects.filter(key=token)
+                user_recipes_serializer = RecipeSerializer(user_recipes, many=True)
+                combined_recipes += user_recipes_serializer.data
+            
+            data = {
+                'status': 'success',
+                'result': 0,
+                'data': {
+                    'recipes': []
+                }
+            }
+            
+            for item in combined_recipes:
+                if item['key'] != None and item['key'] != '':
+                    data['data']['recipes'].append(format_recipe(item, single=False, user=True))
+                else:
+                    data['data']['recipes'].append(format_recipe(item, single=False, user=False))
+                data['result'] += 1
+            
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "failed",
+                             "message": "Key and Search query not provided!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SingleRecipe(APIView):
@@ -44,11 +59,19 @@ class SingleRecipe(APIView):
         try:
             recipe = Recipes.objects.get(id=id)
             serializer = RecipeSerializer(recipe)
-            data = serializer.data
-            data['ingredients'] = format_ingredients(serializer.data['ingredients'])
+            result = serializer.data
+            data = {
+                'status': 'success',
+                'data': {
+                    'recipe': format_recipe(result, single=True, user=result['key'] != None and result['key'] != '')
+                },
+            }
             return Response(data=data, status=status.HTTP_200_OK)
         except Recipes.DoesNotExist:
-            return Response(data={'error': 'No recipe found!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={
+                    'status': 'fail',
+                    'message': 'Invalid ID'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AllRecipeIncludeUser(APIView):
