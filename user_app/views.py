@@ -1,28 +1,15 @@
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.response import Response
+from rest_framework import status
 
-from datetime import datetime, timedelta
-import uuid
+from user_app.models import AccessKey
+from user_app.serializers import AccessKeySerializer
 
 # Create your views here.
 
-class GenerateTokenForGuestView(APIView):
-    permission_classes = [AllowAny]  # Allows anyone to generate a token
-
+class GenerateTokenForGuestView(APIView):  
     def post(self, request):
-        guest_id = str(uuid.uuid4())  # Generate a unique guest ID
+        access_key = AccessKey.objects.create()
+        serializer = AccessKeySerializer(access_key)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
-        token = AccessToken()
-        token["guest_id"] = guest_id  # Attach guest ID to the token
-
-        # Set token expiration (1 hour from now)
-        expiry_time = datetime.utcnow() + timedelta(hours=1)
-        token.set_exp(from_time=datetime.utcnow(), lifetime=timedelta(hours=1))
-
-        return Response({
-            "access_token": str(token),
-            "expires_at": expiry_time,
-            "guest_id": guest_id
-        })

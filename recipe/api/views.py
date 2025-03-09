@@ -5,8 +5,6 @@ from rest_framework.views import APIView
 from recipe.models import Recipes
 from recipe.api.serializers import RecipeSerializer
 from recipe.api.helpers import format_recipe
-from recipe.api.permissions import HasValidToken
-from recipe.api.authentication import GuestJWTAuthentication
 # Create your views here.
 
 class AllRecipe(APIView):
@@ -73,25 +71,3 @@ class SingleRecipe(APIView):
                     'message': 'Invalid ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-
-class AllRecipeIncludeUser(APIView):
-    """
-    This view is protected by the HasValidToken permission.
-    Only users with a valid JWT guest token can access it.
-    """
-    authentication_classes = [GuestJWTAuthentication]  # Use custom authentication
-    permission_classes = [HasValidToken]  # Apply the custom permission
-
-    def get(self, request):
-        token = request.auth  # we can access the token from request.auth
-        
-        try:
-            recipes = Recipes.objects.filter(key=None)
-            user_recipes = Recipes.objects.filter(key=token)  # fetching recipes create by user
-        except Recipes.DoesNotExist:
-            return Response({'response': 'No recipes found!'}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = RecipeSerializer(recipes, many=True)
-        user_recipes_serializer = RecipeSerializer(user_recipes, many=True)
-
-        return Response(data=serializer.data + user_recipes_serializer.data, status=status.HTTP_200_OK)
