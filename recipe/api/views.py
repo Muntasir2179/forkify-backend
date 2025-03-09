@@ -1,10 +1,12 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.exceptions import AuthenticationFailed
 
 from recipe.models import Recipes
 from recipe.api.serializers import RecipeSerializer
 from recipe.api.helpers import format_recipe
+from user_app.models import AccessKey
 # Create your views here.
 
 class AllRecipe(APIView):
@@ -71,3 +73,40 @@ class SingleRecipe(APIView):
                     'message': 'Invalid ID'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AddRecipe(APIView):
+    def post(self, request):
+        token = request.query_params.get('key')
+        data = request.data
+        
+        try:
+            is_token = AccessKey.objects.get(access_key=token)  # checking if the token exists or not
+        except Exception:
+            raise AuthenticationFailed(
+                {
+                    'status': 'fail',
+                    'message': 'You are not authorized to access this endpoint! Check your access key!'
+                },
+                code=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        data['key'] = token  # add the access token to the data to store in recipe
+        serializer = RecipeSerializer(data=data)
+        if serializer.is_valid():
+            recipe = serializer.save()
+            return Response(
+                {
+                    'status': 'Success',
+                    'data': {
+                        'recipe': RecipeSerializer(recipe).data
+                    }
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {
+                'status': 'fail',
+                'message': serializer.errors
+            }, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
