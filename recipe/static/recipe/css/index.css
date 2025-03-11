@@ -1,0 +1,63 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 20px 200px 80px 200px;
+}
+
+.header p {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: medium;
+}
+
+.details li {
+    margin: 10px 50px;
+}
+
+.btn-container {
+    margin-top: 40px;
+}
+
+.btn-container .alert-success {
+    width: 37%;
+    text-align: center;
+}
+
+.all-recipe {
+    margin-top: 50px;
+}
+
+.get-delete-recipe {
+    margin-top: 50px;
+}
+
+.methods {
+    margin-top: 20px;
+}
+
+.methods p {
+    margin-top: 8px;
+    font-size: 17px;
+}
+
+.parameters h3 {
+    margin-bottom: 20px;
+}
+
+.parameters table {
+    border-collapse: collapse;
+}
+
+.parameters th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+.parameters p {
+    margin-top: 20px;
+}
