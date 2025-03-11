@@ -120,3 +120,33 @@ class SingleRecipe(APIView):
                     'status': 'fail',
                     'message': 'Invalid id or key'
                 }, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        try:
+            token = request.query_params.get('key')
+            recipe = Recipes.objects.get(id=id)
+            data = None
+            
+            if recipe.key != None and recipe.key != '' and recipe.key == token:  # recipe got a key and it is as same as user sent token
+                # have to delete the recipe
+                serializer = RecipeSerializer(recipe)
+                data = serializer.data
+                recipe.delete()  # delete the recipe
+            else:
+                # this user is not authorized to delete this recipe
+                return Response(data={
+                    'status': 'fail',
+                    'message': 'You are not authorized to delete this recipe'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            return Response(data={
+                    'status': 'success',
+                    'data': {
+                        'recipe': format_recipe(data, single=True, user=True)
+                    }
+                }, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(data={
+                    'status': 'fail',
+                    'message': 'Invalid id or key'
+                }, status=status.HTTP_400_BAD_REQUEST)
