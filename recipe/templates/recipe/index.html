@@ -1,0 +1,149 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static "recipe/css/index.css" %}">
+
+    <title>Forkify API Documentation</title>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Forkify API Documentation</h1>
+        <p class="project-link">
+          This API provides recipes for building the
+          <a href="">forkify project</a>
+        </p>
+
+        <h3>Important details</h3>
+        <div class="details">
+          <ul>
+            <li>
+              Search terms are limited. Search for "pizza" or another meal from
+              this list ⟶ <a href="">Search queries</a>
+            </li>
+            <li>Supports up to 100 API requests per hour</li>
+            <li>Only 1 API key request per hour</li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="btn-container">
+        {% csrf_token %}
+        <button class="btn btn-success">Generate Your API Key</button>
+      </div>
+
+      <div class="all-recipe">
+        <h3>Get all recipes/Create recipe</h3>
+        <div class="methods">
+          <p>
+            Allowed methods: <span class="badge badge-info">GET</span>
+            <span class="badge badge-secondary">POST</span>
+          </p>
+          <p>
+            <span class="badge badge-info">GET</span>: Returns a list of recipes
+            for a specific search query
+          </p>
+          <p>
+            <span class="badge badge-secondary">POST</span>: Creates a new
+            recipe
+          </p>
+          <p>URL: <a href="">this is the url</a></p>
+        </div>
+
+        <div class="parameters">
+          <h3>Parameters</h3>
+          <table>
+            <tr>
+              <th>Parameter</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Search</td>
+              <td>Yes</td>
+              <td>
+                Search text. For example
+                <span class="badge badge-warning">search=pizza</span>
+              </td>
+            </tr>
+            <tr>
+              <td>key</td>
+              <td>Only for <span class="badge badge-secondary">POST</span></td>
+              <td>The Forkify API key</td>
+            </tr>
+          </table>
+          <p>
+            Example URL:
+            <a href="">live-url?search=pizza&key=`your-api-key`</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="get-delete-recipe">
+        <h3>Get recipe/Delete recipe</h3>
+        <div class="methods">
+          <p>
+            Allowed methods: <span class="badge badge-info">GET</span>
+            <span class="badge badge-danger">DELETE</span>
+          </p>
+          <p>
+            <span class="badge badge-info">GET</span>: Returns a single recipe
+          </p>
+          <p>
+            <span class="badge badge-danger">DELETE</span>: Deletes a single
+            recipe associated with provided API key
+          </p>
+          <p>URL: <a href="">this is the url</a></p>
+        </div>
+        <div class="parameters">
+          <h3>Parameters</h3>
+          <table>
+            <tr>
+              <th>Parameter</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>id</td>
+              <td>Yes</td>
+              <td>
+                The id of the recipe to be fetched or deleted (part of URL)
+              </td>
+            </tr>
+            <tr>
+              <td>key</td>
+              <td>Yes(for <span class="badge badge-danger">DELETE</span>)</td>
+              <td>The Forkify API key</td>
+            </tr>
+          </table>
+          <p>
+            Example URL:
+            <a href="">live-url?search=pizza&key=`your-api-key`</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+      crossorigin="anonymous"
+    ></script>
+    <script src="{% static "recipe/js/script.js" %}"></script>
+  </body>
+</html>
