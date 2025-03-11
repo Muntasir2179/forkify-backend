@@ -1,13 +1,19 @@
 {
-    "builds": [{
+    "version": 2,
+    "builds": [
+      {
+        "src": "manage.py",
+        "use": "@vercel/python3.11.0"
+      },
+      {
         "src": "forkify_backend/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.0" }
-    }],
+        "use": "@vercel/python3.11.0"
+      }
+    ],
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "forkify_backend/wsgi.py"
-        }
+      {
+        "src": "/(.*)",
+        "dest": "forkify_backend/wsgi.py"
+      }
     ]
-}
+  }
