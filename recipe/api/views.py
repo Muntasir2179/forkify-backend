@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.throttling import ScopedRateThrottle
 
 from recipe.models import Recipes
 from recipe.api.serializers import RecipeSerializer
@@ -15,6 +16,9 @@ class AddRetrieveSearchRecipe(APIView):
         1. Handles search recipes request
         2. Handles user recipes request using key
     '''
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'general-throttle'
+    
     def get(self, request):
         combined_recipes = []
         query = request.query_params.get('search')
@@ -92,6 +96,14 @@ class AddRetrieveSearchRecipe(APIView):
 
 
 class SingleRecipe(APIView):
+    '''
+    Usage:
+        1. Handles GET request for fetching single recipe
+        2. Handles DELETE request for deleting single recipe after token authentication
+    '''
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'general-throttle'
+    
     def get(self, request, id):
         try:
             token = request.query_params.get('key')
