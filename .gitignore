@@ -5,5 +5,5 @@ env
 # folders
 migrations
 __pycache__
-static
-templates
+recipe/static
+recipe/templates

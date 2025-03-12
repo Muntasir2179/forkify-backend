@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
-    'recipe',
     'rest_framework',
+    'recipe',
     'user_app',
     # 'corsheaders',
 ]
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'forkify_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
