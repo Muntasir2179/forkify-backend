@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.throttling import ScopedRateThrottle
+from django.db.models import Q
 
 from recipe.models import Recipes
 from recipe.api.serializers import RecipeSerializer
@@ -24,10 +25,22 @@ class AddRetrieveSearchRecipe(APIView):
         query = request.query_params.get('search')
         token = request.query_params.get('key')
         
+        ''' IMPORTANT:
+        
+        Sqlite: case-insensitive by default.
+        
+            * While using sqlite, searching with key=None will work because sqlite understands both None and ''.
+        
+        PostgreSql: case-sensitive by default. While using this database in filter() method __contains does not work as we expects. It does case-sensitive
+        search. For this very reason same ORM code will fetch different result in sqlite and postgresql. So to use case-insensitive search in postgresql
+        we have to use __icontains instead of __contains to explicitly tell django to follow postgresql's case-insensitive policy. 
+        
+            * While using postgresql, searching with key=None value will not work, because to postgresql None and '' are different.
+        '''
         if query or token:
             # if search query is passed
             if query:
-                recipes = Recipes.objects.filter(title__contains=query, key=None)
+                recipes = Recipes.objects.filter(Q(title__icontains=query) & (Q(key=None) | Q(key="")))
                 serializer = RecipeSerializer(recipes, many=True)
                 combined_recipes += serializer.data
 

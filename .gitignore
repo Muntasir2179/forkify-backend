@@ -1,5 +1,9 @@
 # environment
 env
+.env
+
+# database
+db.sqlite3
 
 # folders
 migrations

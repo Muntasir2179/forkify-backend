@@ -8,7 +8,7 @@ def generate_access_key():
 
 
 class AccessKey(models.Model):
-    access_key = models.CharField(max_length=36, unique=True, default=generate_access_key, editable=False)
+    access_key = models.CharField(max_length=36, unique=True, default=generate_access_key)
     
     def __str__(self):
         return self.access_key
