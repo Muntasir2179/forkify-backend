@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'recipe',
     'user_app',
-    # 'corsheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -167,12 +167,11 @@ LOGGING = {
 
 ######## CORS settings
 
-# if DEBUG:
-#     CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True  # allows all domain url to access
 
-#     CORS_ALLOWED_ORIGINS = [
-#         "http://localhost:1234",  # Your frontend URL
-#     ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:1234",  # allow localhost frontend url for development
+]
 
 
 ######## REST Framework settings
