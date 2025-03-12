@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os, dj_database_url
+import os, dj_database_url, logging
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'recipe',
     'rest_framework',
     'user_app',
-    'corsheaders',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -150,12 +150,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ######## CORS settings
 
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
+# if DEBUG:
+#     CORS_ALLOW_ALL_ORIGINS = True
 
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:1234",  # Your frontend URL
-    ]
+#     CORS_ALLOWED_ORIGINS = [
+#         "http://localhost:1234",  # Your frontend URL
+#     ]
 
 
 ######## REST Framework settings
