@@ -179,5 +179,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'generate-token': '1/hour',
         'general-throttle': '100/hour',
-    }
+    },
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
 }
